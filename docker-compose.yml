@@ -1,0 +1,61 @@
+version: '3.3'
+networks:
+  backend:
+  frontend:
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: acourdus-backend-test-database
+    ports:
+      - '3306:3306'
+    networks:
+      - backend
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=db
+    volumes:
+      - default-mysql:/data
+      - ./mysql:/var/lib/mysql
+  site:
+    image: nginx:stable-alpine
+    container_name: acourdus-backend-test-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - backend
+      - frontend
+  php:
+    build:
+      context: .
+      dockerfile: php.dockerfile
+    container_name: acourdus-backend-test-php
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - "9000:9000"
+    networks:
+      - backend
+  redis:
+    image: redis:4.0
+    container_name: acourdus-backend-test-redis
+    volumes:
+      - default-redis:/data
+    ports:
+      - 6379:6379
+
+  npm:
+    image: node:13.7
+    container_name: acourdus-backend-test-npm
+    volumes:
+      - ./:/var/www/html
+    working_dir: /var/www/html
+    entrypoint: ['npm']
+
+volumes:
+  default-mysql:
+    driver: local
+  default-redis:
+    driver: local

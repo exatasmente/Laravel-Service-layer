@@ -1,0 +1,15 @@
+@import "~tailwindcss/base";
+
+@import "~tailwindcss/components";
+
+@import "~tailwindcss/utilities";
+
+#app {
+    width: 100%;
+}
+
+.help-block {
+    font-style: italic;
+    font-size: 0.75rem;
+    color: #f56565;
+}
